@@ -1,7 +1,7 @@
 package main
 
 import (
-	"api_server/internal/app/apiserver"
+	"restAPI/internal/app/apiserver"
 	"log"
 )
 
