@@ -1,35 +1,73 @@
 package apiserver
 
 import (
-	"fmt"
+	"api_server/internal/app/store"
+	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"io"
+	"net/http"
 )
 
-const(
-	host="172.17.0.2"
-	port="8080"
-	user="postgres"
-	password="password"
-	dbname="Airport"
-)
+
 //APIServer...
 type APIServer struct{
-	psqlInfo string
+	config *Config
 	logger *logrus.Logger
+	router *mux.Router
+	store *store.Store
 }
 //New...
-func New() *APIServer{
+func New(config *Config) *APIServer{
 	return &APIServer{
-		psqlInfo:fmt.Sprintf("host=%s port=%d user=%s"+"password=%s dbname=%s sslmode=disable",host,port,user,password,dbname),
-		logger:logrus.New(),
+		config: config,
+		logger: logrus.New(),
+		router: mux.NewRouter(),
 	}
 }
-//Start...
-func(s *APIServer) Start() error{
+
+func (s *APIServer) configureLogger() error{
+	level,err:=logrus.ParseLevel(s.config.LogLevel)
+	if err!=nil{
+		return err
+	}
+	s.logger.SetLevel(level)
 	return nil
 }
-//Какой логер использовать?
-//configureLoger..
-func (s* APIServer) configureLoger() error{
 
+func (s *APIServer)configureRouter(){
+	s.router.HandleFunc("/hello",s.handleHello())
 }
+
+func(s *APIServer) handleHello() http.HandlerFunc{
+	return func(w http.ResponseWriter,r *http.Request){
+		io.WriteString(w,"hello")
+	}
+}
+
+//Start...
+func(s *APIServer) Start() error{
+	if err:=s.configureLogger();err!=nil{
+		return err
+	}
+	s.configureRouter()
+
+	if err:=s.configureStore();err!=nil{
+		return err
+	}
+	s.logger.Info("API server started!")
+	return http.ListenAndServe(s.config.BindAddr,s.router)
+}
+
+func(s *APIServer) configureStore() error{
+	st:=store.New(s.config.Store)
+	if err:=st.Open();err!=nil{
+		return err
+	}
+	s.store=st
+	return nil
+}
+
+
+
+

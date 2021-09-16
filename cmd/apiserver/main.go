@@ -32,7 +32,9 @@ type Ticket struct{
 
 
 func main(){
-	s:=apiserver.New()
+	config:=apiserver.NewConfig()
+
+	s:=apiserver.New(config)
 	err:=s.Start()
 	if err!=nil{
 		log.Fatal(err)
