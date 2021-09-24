@@ -10,6 +10,8 @@ type Store struct{
 	config *Config
 	db *sql.DB
 	cityRepository *CityRepo
+	ticketRepostiry *TicketRepo
+	passengerRepository *PassengerRepo
 }
 
 func New(config *Config) *Store{
@@ -19,7 +21,8 @@ func New(config *Config) *Store{
 }
 //Open...
 func (s *Store) Open() error{
-	db,err:=sql.Open("postgres",s.config.DatabaseURL)
+	connStr:="host=localhost port=5432 user=procol dbname=airport sslmode=disable"
+	db,err:=sql.Open("postgres",connStr)
 	if err!=nil{
 		return err
 	}
@@ -34,13 +37,35 @@ func (s *Store) Close(){
 	s.db.Close()
 }
 
-func (s *Store) City() *CityRepo{
+
+
+func (s *Store) Ticket() *TicketRepo{
 	if s.cityRepository!=nil {
-		return s.cityRepository
+		return s.ticketRepostiry
 	}
-	s.cityRepository = &CityRepo{
+	s.ticketRepostiry = &TicketRepo{
 		store:s,
 
+	}
+	return s.ticketRepostiry
+}
+
+func (s *Store) Passenger() *PassengerRepo{
+	if s.passengerRepository!=nil{
+		return s.passengerRepository
+	}
+	s.passengerRepository=&PassengerRepo{
+		store: s,
+	}
+	return s.passengerRepository
+}
+//City...
+func (s *Store) City() *CityRepo{
+	if s.cityRepository!=nil{
+		return s.cityRepository
+	}
+	s.cityRepository=&CityRepo{
+		store:s,
 	}
 	return s.cityRepository
 }

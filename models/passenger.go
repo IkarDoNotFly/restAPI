@@ -1,7 +1,7 @@
 package models
 
 type Passenger struct {
-	id int
-	name string
-	surname string
+	Id   int
+	Name string
+	Surname string
 }

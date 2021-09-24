@@ -1,16 +1,14 @@
 
-CREATE TABLE ticket
-(
-    "id"   int NOT NULL,
-    baggage  smallint NOT NULL,
+CREATE TABLE ticket(
+    id   int NOT NULL PRIMARY KEY ,
+    baggage  real NOT NULL,
     type_menu varchar(50) NOT NULL,
-    "date"     date NOT NULL,
+    date     date NOT NULL,
     cost     real NOT NULL,
     point_a int NOT NULL ,
     point_b int NOT NULL,
     id_passenger int NOT NULL,
-    CONSTRAINT PK_ticket PRIMARY KEY ( "id" ),
-    FOREIGN KEY(id_passenger) REFERENCES Passenger(id_passenger) ON DELETE CASCADE ,
-    FOREIGN KEY(point_a) REFERENCES Cities("id") ON DELETE CASCADE ,
-    FOREIGN KEY(point_b) REFERENCES Cities("id") ON DELETE CASCADE
+    FOREIGN KEY(id_passenger) REFERENCES passenger(id) ON DELETE CASCADE ,
+    FOREIGN KEY(point_a) REFERENCES city("id") ON DELETE CASCADE ,
+    FOREIGN KEY(point_b) REFERENCES city("id") ON DELETE CASCADE
 );

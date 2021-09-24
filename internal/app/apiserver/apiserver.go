@@ -2,11 +2,13 @@ package apiserver
 
 import (
 	"api_server/internal/app/store"
+	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
-	//"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 
@@ -36,15 +38,49 @@ func (s *APIServer) configureLogger() error{
 }
 
 func (s *APIServer)configureRouter(){
-	s.router.HandleFunc("/hello",s.handleHello())
+	s.router.HandleFunc("/",s.handleHelp())
+	s.router.HandleFunc("/getCity",s.handleGetCity())
+	s.router.HandleFunc("/getPassenger",s.handleGetPassenger())
 }
 
-func(s *APIServer) handleHello() http.HandlerFunc{
+func (s *APIServer) handleHelp() http.HandlerFunc{
 	return func(w http.ResponseWriter,r *http.Request){
-		io.WriteString(w,"hello")
+		io.WriteString(w,"I can find city,passenger,ticket by id. " +
+			"Example: localhost:8080/getCity?id=1")
 	}
 }
+func(s *APIServer) handleGetPassenger() http.HandlerFunc{
+	store:=store.PassengerRepo{}
+	return func(w http.ResponseWriter,r *http.Request){
+		id,err:=strconv.Atoi(r.URL.Query().Get("id"))
+		if err!=nil{
+			io.WriteString(w,"Wrong id! Try again")
+		}
+		responce,err:=store.FindPaseengerById(id)
 
+		if(err!=nil){
+			io.WriteString(w,"Passenger not found!")
+		}
+		str,err:=json.Marshal(responce)
+		fmt.Println(str)
+		if err!=nil{
+			io.WriteString(w,"Something wrong ")
+		}
+
+
+		io.WriteString(w,string(str))
+	}
+
+}
+func(s *APIServer) handleGetCity() http.HandlerFunc{
+	return func(w http.ResponseWriter,r *http.Request){
+		io.WriteString(w,"City")
+	}
+}
+//handleGetTrades..
+func(s *APIServer) handleGetTrades(){
+
+}
 //Start...
 func(s *APIServer) Start() error{
 	if err:=s.configureLogger();err!=nil{

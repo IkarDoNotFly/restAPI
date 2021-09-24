@@ -1,7 +1,7 @@
 package main
 
 import (
-	"restAPI/internal/app/apiserver"
+	"api_server/internal/app/apiserver"
 	"log"
 )
 
@@ -36,6 +36,7 @@ func main(){
 
 	s:=apiserver.New(config)
 	err:=s.Start()
+
 	if err!=nil{
 		log.Fatal(err)
 	}

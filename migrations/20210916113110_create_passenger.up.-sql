@@ -1,7 +1,0 @@
-CREATE TABLE passenger
-(
-    "id"      int NOT NULL,
-    name_passenger    varchar(50) NOT NULL ,
-    surname_passenger varchar(50) NOT NULL ,
-    CONSTRAINT PK_passenger PRIMARY KEY ( "id" )
-);

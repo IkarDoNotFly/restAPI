@@ -1,7 +1,7 @@
 package models
 
 type City struct{
-	id int
-	name string
+	Id   int    `json:"id"`
+	Name string `json:"name"'`
 }
 
